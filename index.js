@@ -91,10 +91,11 @@ app.post('/auth', async (request, response) => {
     }
 })
 
-
-app.listen(3000,()=> {
-    console.log("listening  :3000")
-})
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(3000, () => {
+        console.log("Server berjalan di http://localhost:3000");
+    });
+}
 
 
 export default app;
