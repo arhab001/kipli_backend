@@ -50,6 +50,9 @@ app.get('/',handleJWT,async (request,response)=>{
     response.json(data);
 })
 
+app.get("/test",(req,res)=>{
+    res.json({message : "Berhasil"})
+})
 
 app.post('/auth', async (request, response) => {
     const { email, password } = request.body;
