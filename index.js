@@ -11,7 +11,7 @@ app.use(cors({
 
 dotenv.config();
 
-secretkey = process.env.SECRET_KEY ?? "880088"
+const secretkey = process.env.SECRET_KEY ?? "880088"
 
 function handleJWT(request,response,next) {
     const auth = request.headers.auth
