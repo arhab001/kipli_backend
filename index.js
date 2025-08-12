@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import cors from "cors"
 import bcrypt from "bcrypt";
-import { createUsers, getAvailableUsers, updateDataUser } from "./repository.js";
+import { createUsers, deleteHistory, getAvailableUsers, updateDataUser } from "./repository.js";
 const app = express();
 app.use(express.json());
 app.use(cors({
@@ -29,7 +29,16 @@ function handleJWT(request,response,next) {
         response.status(401).send("Unauthorized"); return;
     }
 }
+app.delete('/',handleJWT,async (request,response)=> {
+    try {
+        await deleteHistory(request.useremail)
+        response.status(200).send('ok')
+    } catch (err) {
+        console.error(err)
+        response.status(500).send('internal server error')
 
+    }
+})
 app.post('/update',handleJWT,async (request,response)=> {
     const data = request.body.data;
     if (!data) {
