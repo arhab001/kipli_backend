@@ -30,14 +30,14 @@ function handleJWT(request,response,next) {
     }
 }
 
-app.post('/update',handleJWT,(request,response)=> {
+app.post('/update',handleJWT,async (request,response)=> {
     const data = request.body.data;
     if (!data) {
         response.status(400).send('bad request')
         return;
     }
     try {
-        updateDataUser(request.useremail,data);
+        await updateDataUser(request.useremail,data);
         response.status(200).send('ok')
     } catch (error) {
         console.log(error);
