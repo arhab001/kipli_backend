@@ -2,6 +2,7 @@ import express, { request, response } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import cors from "cors"
+import bcrypt from "bcrypt";
 import { createUsers, getAvailableUsers, updateDataUser } from "./repository.js";
 const app = express();
 app.use(express.json());
@@ -65,7 +66,8 @@ app.post('/auth', async (request, response) => {
         console.log(status);
         if (status) {
             console.log("user ditemukan");
-            if (password == status.password) {
+            const compare = await bcrypt.compare(password,status.password);
+            if (compare) {
                 const token = jwt.sign({
                     email: status.email,
                     createAt: Date.now().toString()

@@ -1,4 +1,5 @@
 import {PrismaClient} from "@prisma/client"
+import bycrypt from "bcrypt"
 const prisma = new PrismaClient();
 
 
@@ -22,7 +23,9 @@ export async function updateDataUser(email,newData) {
 }
 
 export async function createUsers(email , password) {
+    const hash_password = await bycrypt.hash(password,3);
+    console.log(hash_password);
     await prisma.user.create({
-        data : {email,password}
+        data : {email,password : hash_password}
     })
 }
