@@ -1,31 +1,37 @@
-import {PrismaClient} from "@prisma/client"
-import bycrypt from "bcrypt"
-const prisma = new PrismaClient();
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
+const globalForPrisma = globalThis;
+
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
+  });
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export async function getAvailableUsers(email) {
-    const data = await prisma.user.findFirst({where : { email : email}});
-    return data
+  return prisma.user.findFirst({ where: { email } });
 }
 
-export async function updateDataUser(email,newData) {
-     const datauser = await prisma.user.findFirst({where : {email : email}});
-     const oldData = datauser.data || []
-     oldData.push(newData); // tambah new data
-     await prisma.user.update({
-        where : {
-            email : email
-        },
-        data : {
-            data : oldData
-        }
-     });
+export async function updateDataUser(email, newData) {
+  const datauser = await prisma.user.findFirst({ where: { email } });
+  const oldData = datauser?.data || [];
+  oldData.push(newData);
+  await prisma.user.update({
+    where: { email },
+    data: { data: oldData },
+  });
 }
 
-export async function createUsers(email , password) {
-    const hash_password = await bycrypt.hash(password,3);
-    console.log(hash_password);
-    await prisma.user.create({
-        data : {email,password : hash_password}
-    })
+export async function createUsers(email, password) {
+  const hash_password = await bcrypt.hash(password, 3);
+  await prisma.user.create({
+    data: { email, password: hash_password },
+  });
 }
